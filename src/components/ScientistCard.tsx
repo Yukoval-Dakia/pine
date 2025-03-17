@@ -135,11 +135,17 @@ const ScientistCard: React.FC<ScientistCardProps> = ({ scientist, isVisible, pre
   // 为依赖数组提取唯一标识符
   const scientistIdentifier = scientist._id || scientist.name;
   
-  // 生成随机背景颜色
+  // 生成随机背景颜色 - 基于科学家标识符生成确定性的颜色
   const randomBgColor = useMemo(() => {
-    const randomIndex = Math.floor(Math.random() * backgroundColors.length);
-    return backgroundColors[randomIndex];
-  }, [scientistIdentifier]); // 使用提取出的标识符作为依赖
+    // 使用科学家标识符的字符串生成一个数字哈希
+    let hash = 0;
+    for (let i = 0; i < scientistIdentifier.length; i++) {
+      hash = scientistIdentifier.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    // 使用哈希值确定背景颜色的索引
+    const index = Math.abs(hash % backgroundColors.length);
+    return backgroundColors[index];
+  }, [scientistIdentifier]); // 现在确实依赖于scientistIdentifier
   
   // 检查图片是否加载成功
   useEffect(() => {
