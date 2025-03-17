@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "https://yukoval-dakia.github.io/the-center-believers-frontend/static/css/main.f3775408.css",
-    "main.js": "https://yukoval-dakia.github.io/the-center-believers-frontend/static/js/main.cbfa2b60.js",
-    "static/js/169.138be50a.chunk.js": "https://yukoval-dakia.github.io/the-center-believers-frontend/static/js/169.138be50a.chunk.js",
-    "static/js/453.9e360ccc.chunk.js": "https://yukoval-dakia.github.io/the-center-believers-frontend/static/js/453.9e360ccc.chunk.js",
-    "index.html": "https://yukoval-dakia.github.io/the-center-believers-frontend/index.html",
-    "main.f3775408.css.map": "https://yukoval-dakia.github.io/the-center-believers-frontend/static/css/main.f3775408.css.map",
-    "main.cbfa2b60.js.map": "https://yukoval-dakia.github.io/the-center-believers-frontend/static/js/main.cbfa2b60.js.map",
-    "169.138be50a.chunk.js.map": "https://yukoval-dakia.github.io/the-center-believers-frontend/static/js/169.138be50a.chunk.js.map",
-    "453.9e360ccc.chunk.js.map": "https://yukoval-dakia.github.io/the-center-believers-frontend/static/js/453.9e360ccc.chunk.js.map"
+    "main.css": "https://worship.yukovalstudios.com/static/css/main.f3775408.css",
+    "main.js": "https://worship.yukovalstudios.com/static/js/main.001c5fdf.js",
+    "static/js/169.138be50a.chunk.js": "https://worship.yukovalstudios.com/static/js/169.138be50a.chunk.js",
+    "static/js/453.9e360ccc.chunk.js": "https://worship.yukovalstudios.com/static/js/453.9e360ccc.chunk.js",
+    "index.html": "https://worship.yukovalstudios.com/index.html",
+    "main.f3775408.css.map": "https://worship.yukovalstudios.com/static/css/main.f3775408.css.map",
+    "main.001c5fdf.js.map": "https://worship.yukovalstudios.com/static/js/main.001c5fdf.js.map",
+    "169.138be50a.chunk.js.map": "https://worship.yukovalstudios.com/static/js/169.138be50a.chunk.js.map",
+    "453.9e360ccc.chunk.js.map": "https://worship.yukovalstudios.com/static/js/453.9e360ccc.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.f3775408.css",
-    "static/js/main.cbfa2b60.js"
+    "static/js/main.001c5fdf.js"
   ]
 }
