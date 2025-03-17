@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Scientist } from '../types/scientist';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getTranslation } from '../translations';
 
 // 卡片容器样式
-const CardContainer = styled.div<{ $isVisible: boolean }>`
-  background-color: white;
+const CardContainer = styled.div<{ $isVisible: boolean; $bgColor: string }>`
+  background-color: ${props => props.$bgColor};
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
@@ -66,24 +66,26 @@ const Name = styled.h2<{ $color: string }>`
   }
 `;
 
-// 学科标签
+// 学科标签 - 修改为不遮挡图片
 const Subject = styled.div<{ $color: string }>`
   background-color: ${props => props.$color}22;
   color: ${props => props.$color};
   padding: 10px 25px;
   border-radius: 20px;
   display: block;
-  margin: 20px auto;
+  margin: 0 auto;
   font-size: 24px;
   font-weight: bold;
   text-align: center;
   width: fit-content;
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+`;
+
+// 科目容器
+const SubjectContainer = styled.div`
+  padding: 20px 0 10px 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  width: 100%;
 `;
 
 // 占位符加载动画
@@ -105,6 +107,18 @@ const ImagePlaceholder = styled.div`
   border-bottom: 5px solid #edeef1;
 `;
 
+// 随机背景颜色数组
+const backgroundColors = [
+  '#f8f9fa', // 浅灰
+  '#e9f5f9', // 浅蓝
+  '#f9f5e9', // 浅黄
+  '#f5e9f9', // 浅紫
+  '#e9f9f5', // 浅绿
+  '#f9e9e9', // 浅红
+  '#e9e9f9', // 浅蓝紫
+  '#f5f9e9', // 浅黄绿
+];
+
 // 科学家卡片组件
 interface ScientistCardProps {
   scientist: Scientist;
@@ -117,6 +131,12 @@ const ScientistCard: React.FC<ScientistCardProps> = ({ scientist, isVisible, pre
   const t = getTranslation(language);
   const [isImageLoaded, setIsImageLoaded] = useState(preloaded);
   const [imageSrc, setImageSrc] = useState(scientist.image || '');
+  
+  // 生成随机背景颜色
+  const randomBgColor = useMemo(() => {
+    const randomIndex = Math.floor(Math.random() * backgroundColors.length);
+    return backgroundColors[randomIndex];
+  }, [scientist._id || scientist.name]); // 使用科学家ID或名称作为依赖，确保同一科学家颜色一致
   
   // 检查图片是否加载成功
   useEffect(() => {
@@ -149,10 +169,12 @@ const ScientistCard: React.FC<ScientistCardProps> = ({ scientist, isVisible, pre
   }, [scientist.image, scientist.fallbackImage, preloaded]);
 
   return (
-    <CardContainer $isVisible={isVisible}>
-      <Subject $color={scientist.color || '#3498db'}>
-        {t.scientist.subjectPrefix} {scientist.subject || '未知学科'}
-      </Subject>
+    <CardContainer $isVisible={isVisible} $bgColor={randomBgColor}>
+      <SubjectContainer>
+        <Subject $color={scientist.color || '#3498db'}>
+          {t.scientist.subjectPrefix} {scientist.subject || '未知学科'}
+        </Subject>
+      </SubjectContainer>
       {isImageLoaded ? (
         <ScientistImage $image={imageSrc} />
       ) : (
