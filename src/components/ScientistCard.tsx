@@ -46,17 +46,21 @@ const CardContent = styled.div`
 const Name = styled.h2<{ $color: string }>`
   margin: 0 0 10px 0;
   color: ${props => props.$color};
-  font-size: 24px;
+  font-size: 32px;
   display: flex;
   align-items: center;
+  justify-content: center;
   position: relative;
+  width: 100%;
+  text-align: center;
   
   &:after {
     content: '';
     position: absolute;
     bottom: -5px;
-    left: 0;
-    width: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
     height: 3px;
     background-color: ${props => props.$color};
   }
@@ -66,12 +70,14 @@ const Name = styled.h2<{ $color: string }>`
 const Subject = styled.div<{ $color: string }>`
   background-color: ${props => props.$color}22;
   color: ${props => props.$color};
-  padding: 4px 10px;
-  border-radius: 15px;
-  display: inline-block;
-  margin: 10px 0;
-  font-size: 14px;
+  padding: 8px 20px;
+  border-radius: 20px;
+  display: block;
+  margin: 15px auto;
+  font-size: 18px;
   font-weight: bold;
+  text-align: center;
+  width: fit-content;
 `;
 
 // 描述
@@ -157,9 +163,6 @@ const ScientistCard: React.FC<ScientistCardProps> = ({ scientist, isVisible, pre
         <Subject $color={scientist.color || '#3498db'}>
           {t.scientist.subjectPrefix} {scientist.subject || '未知学科'}
         </Subject>
-        <Description>
-          {scientist.description || '暂无描述'}
-        </Description>
       </CardContent>
     </CardContainer>
   );
