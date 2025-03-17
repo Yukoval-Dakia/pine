@@ -75,6 +75,19 @@ const ScientistInfo = styled.div`
   padding: 15px;
 `;
 
+const RadioGroup = styled.div`
+  margin-bottom: 10px;
+  display: flex;
+  gap: 15px;
+`;
+
+const RadioLabel = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+`;
+
 const AdminPage: React.FC = () => {
   const [scientists, setScientists] = useState<Scientist[]>([]);
   const [loading, setLoading] = useState(false);
@@ -84,7 +97,7 @@ const AdminPage: React.FC = () => {
     subject: '',
     image: null as File | null,
     imageUrl: '',
-    imageSource: 'upload' // 'upload' 或 'url'
+    imageSource: 'upload' as 'upload' | 'url'
   });
 
   const fetchScientists = useCallback(async (retryCount = 0) => {
@@ -92,7 +105,6 @@ const AdminPage: React.FC = () => {
     setError(null);
     
     try {
-      // 使用硬编码的URL作为备选
       const apiUrl = process.env.REACT_APP_API_URL || 'https://the-center-believers-backend.onrender.com';
       console.log('管理页面获取科学家数据，API URL:', apiUrl);
       
@@ -117,7 +129,6 @@ const AdminPage: React.FC = () => {
       console.error('获取科学家列表失败:', error);
       setError('连接后端服务失败。后端服务可能正在启动中，请稍后再试。');
       
-      // 如果是连接错误并且重试次数小于3，则尝试重试
       if (retryCount < 3 && error instanceof Error && 
           (error.message.includes('fetch') || error.message.includes('network'))) {
         console.log(`将在3秒后重试 (${retryCount + 1}/3)...`);
@@ -135,19 +146,19 @@ const AdminPage: React.FC = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, files } = e.target as HTMLInputElement;
     if (name === 'image' && files) {
-      setFormData(prev => ({ ...prev, [name]: files[0] }));
+      setFormData(prev => ({ ...prev, [name]: files[0], imageUrl: '' }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
   };
 
   const handleImageSourceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({ 
-      ...prev, 
-      imageSource: e.target.value,
-      // 切换时清空另一种输入方式的值
-      image: e.target.value === 'url' ? null : prev.image,
-      imageUrl: e.target.value === 'upload' ? '' : prev.imageUrl
+    const source = e.target.value as 'upload' | 'url';
+    setFormData(prev => ({
+      ...prev,
+      imageSource: source,
+      image: source === 'url' ? null : prev.image,
+      imageUrl: source === 'upload' ? '' : prev.imageUrl
     }));
   };
 
@@ -157,14 +168,19 @@ const AdminPage: React.FC = () => {
     const formDataToSend = new FormData();
     formDataToSend.append('name', formData.name);
     formDataToSend.append('subject', formData.subject);
-    
-    if (formData.imageSource === 'upload' && formData.image) {
+
+    if (formData.imageSource === 'upload') {
+      if (!formData.image) {
+        alert('请选择科学家图片');
+        return;
+      }
       formDataToSend.append('image', formData.image);
-    } else if (formData.imageSource === 'url' && formData.imageUrl) {
-      formDataToSend.append('image', formData.imageUrl);
     } else {
-      alert('请提供科学家图片');
-      return;
+      if (!formData.imageUrl) {
+        alert('请输入图片 URL');
+        return;
+      }
+      formDataToSend.append('image', formData.imageUrl);
     }
 
     try {
@@ -249,7 +265,7 @@ const AdminPage: React.FC = () => {
           正在加载数据，请稍候...
         </div>
       )}
-      
+
       <ScientistForm onSubmit={handleSubmit}>
         <FormGroup>
           <Label>姓名</Label>
@@ -275,78 +291,71 @@ const AdminPage: React.FC = () => {
         
         <FormGroup>
           <Label>图片来源</Label>
-          <div style={{ marginBottom: '10px' }}>
-            <label style={{ marginRight: '15px' }}>
+          <RadioGroup>
+            <RadioLabel>
               <input
                 type="radio"
                 name="imageSource"
                 value="upload"
                 checked={formData.imageSource === 'upload'}
                 onChange={handleImageSourceChange}
-                style={{ marginRight: '5px' }}
               />
               上传图片
-            </label>
-            <label>
+            </RadioLabel>
+            <RadioLabel>
               <input
                 type="radio"
                 name="imageSource"
                 value="url"
                 checked={formData.imageSource === 'url'}
                 onChange={handleImageSourceChange}
-                style={{ marginRight: '5px' }}
               />
-              使用外部URL
-            </label>
-          </div>
+              图片 URL
+            </RadioLabel>
+          </RadioGroup>
         </FormGroup>
-        
+
         {formData.imageSource === 'upload' ? (
           <FormGroup>
-            <Label>上传照片</Label>
+            <Label>上传图片</Label>
             <Input
               type="file"
               name="image"
               accept="image/*"
               onChange={handleInputChange}
-              required={formData.imageSource === 'upload'}
+              required
             />
           </FormGroup>
         ) : (
           <FormGroup>
-            <Label>图片URL</Label>
+            <Label>图片 URL</Label>
             <Input
               type="url"
               name="imageUrl"
               value={formData.imageUrl}
               onChange={handleInputChange}
               placeholder="https://example.com/image.jpg"
-              required={formData.imageSource === 'url'}
+              required
             />
           </FormGroup>
         )}
-        
+
         <Button type="submit">添加科学家</Button>
       </ScientistForm>
 
       <ScientistList>
         {scientists.map(scientist => (
-          <ScientistCard key={scientist._id || scientist.name}>
-            <ScientistImage 
-              src={scientist.image 
-                ? (scientist.image.startsWith('http') 
-                    ? scientist.image 
-                    : `${process.env.REACT_APP_API_URL || 'https://the-center-believers-backend.onrender.com'}${scientist.image}`)
-                : '/images/default-scientist.jpg'
-              } 
-              alt={scientist.name} 
-            />
+          <ScientistCard key={scientist._id}>
+            <ScientistImage src={scientist.image} alt={scientist.name} />
             <ScientistInfo>
               <h3>{scientist.name}</h3>
-              <p>{scientist.subject || '未设置学科'}</p>
-              {scientist._id && (
-                <Button onClick={() => handleDelete(scientist._id)}>删除</Button>
-              )}
+              <p>{scientist.subject}</p>
+              <Button 
+                onClick={() => handleDelete(scientist._id)}
+                style={{ backgroundColor: '#dc3545' }}
+              >
+                删除
+              </Button>
             </ScientistInfo>
           </ScientistCard>
         ))}
