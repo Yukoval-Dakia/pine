@@ -132,11 +132,14 @@ const ScientistCard: React.FC<ScientistCardProps> = ({ scientist, isVisible, pre
   const [isImageLoaded, setIsImageLoaded] = useState(preloaded);
   const [imageSrc, setImageSrc] = useState(scientist.image || '');
   
+  // 为依赖数组提取唯一标识符
+  const scientistIdentifier = scientist._id || scientist.name;
+  
   // 生成随机背景颜色
   const randomBgColor = useMemo(() => {
     const randomIndex = Math.floor(Math.random() * backgroundColors.length);
     return backgroundColors[randomIndex];
-  }, [scientist._id || scientist.name]); // 使用科学家ID或名称作为依赖，确保同一科学家颜色一致
+  }, [scientistIdentifier]); // 使用提取出的标识符作为依赖
   
   // 检查图片是否加载成功
   useEffect(() => {
