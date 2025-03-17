@@ -4,6 +4,18 @@ import { Scientist } from '../types/scientist';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getTranslation } from '../translations';
 
+// 彩虹动画效果
+const rainbowBorder = keyframes`
+  0% { border-color: #ff0000; }
+  14% { border-color: #ff7f00; }
+  28% { border-color: #ffff00; }
+  42% { border-color: #00ff00; }
+  57% { border-color: #0000ff; }
+  71% { border-color: #4b0082; }
+  85% { border-color: #9400d3; }
+  100% { border-color: #ff0000; }
+`;
+
 // 卡片容器样式
 const CardContainer = styled.div<{ $isVisible: boolean; $bgColor: string }>`
   background-color: ${props => props.$bgColor};
@@ -17,6 +29,8 @@ const CardContainer = styled.div<{ $isVisible: boolean; $bgColor: string }>`
   opacity: ${props => props.$isVisible ? 1 : 0};
   transform: ${props => props.$isVisible ? 'scale(1)' : 'scale(0.9)'};
   transition: opacity 0.3s ease, transform 0.3s ease;
+  border: 6px solid #ff0000;
+  animation: ${rainbowBorder} 5s linear infinite;
 `;
 
 const fadeIn = keyframes`
@@ -38,52 +52,40 @@ const ScientistImage = styled.div<{ $image: string }>`
 
 // 卡片内容
 const CardContent = styled.div<{ $bgColor: string }>`
-  padding: 20px;
+  padding: 10px 20px;
   background-color: ${props => props.$bgColor};
 `;
 
-// 姓名标题
+// 姓名标题 - 加大字号
 const Name = styled.h2<{ $textColor: string }>`
   margin: 0;
   color: ${props => props.$textColor};
-  font-size: 38px;
+  font-size: 46px;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   width: 100%;
   text-align: center;
-  
-  &:after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 120px;
-    height: 3px;
-    background-color: ${props => props.$textColor};
+  padding: 5px 0;
   }
 `;
 
-// 学科标签 - 修改为不遮挡图片
+// 学科标签 - 修改为不遮挡图片并加大字号
 const Subject = styled.div<{ $textColor: string; $bgColor: string }>`
-  background-color: ${props => props.$bgColor};
   color: ${props => props.$textColor};
   padding: 10px 25px;
-  border-radius: 20px;
   display: block;
   margin: 0 auto;
-  font-size: 24px;
+  font-size: 32px;
   font-weight: bold;
   text-align: center;
   width: fit-content;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 `;
 
 // 科目容器
 const SubjectContainer = styled.div<{ $bgColor: string }>`
-  padding: 20px 0 10px 0;
+  padding: 20px 10px 10px 10px;
   background-color: ${props => props.$bgColor};
   width: 100%;
 `;
@@ -202,7 +204,7 @@ const ScientistCard: React.FC<ScientistCardProps> = ({ scientist, isVisible, pre
   return (
     <CardContainer $isVisible={isVisible} $bgColor={bgColor}>
       <SubjectContainer $bgColor={bgColor}>
-        <Subject $textColor={textColor} $bgColor={`${bgColor}DD`}>
+        <Subject $textColor={textColor} $bgColor={`${bgColor}`}>
           {t.scientist.subjectPrefix} {scientist.subject || '未知学科'}
         </Subject>
       </SubjectContainer>
@@ -220,4 +222,4 @@ const ScientistCard: React.FC<ScientistCardProps> = ({ scientist, isVisible, pre
   );
 };
 
-export default ScientistCard;
+export default ScientistCard; 
