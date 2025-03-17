@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/the-center-believers-frontend/static/css/main.f3775408.css",
+    "main.js": "/the-center-believers-frontend/static/js/main.be3e245b.js",
+    "static/js/169.138be50a.chunk.js": "/the-center-believers-frontend/static/js/169.138be50a.chunk.js",
+    "static/js/453.9e360ccc.chunk.js": "/the-center-believers-frontend/static/js/453.9e360ccc.chunk.js",
+    "index.html": "/the-center-believers-frontend/index.html",
+    "main.f3775408.css.map": "/the-center-believers-frontend/static/css/main.f3775408.css.map",
+    "main.be3e245b.js.map": "/the-center-believers-frontend/static/js/main.be3e245b.js.map",
+    "169.138be50a.chunk.js.map": "/the-center-believers-frontend/static/js/169.138be50a.chunk.js.map",
+    "453.9e360ccc.chunk.js.map": "/the-center-believers-frontend/static/js/453.9e360ccc.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.f3775408.css",
+    "static/js/main.be3e245b.js"
+  ]
+}
