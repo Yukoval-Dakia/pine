@@ -168,7 +168,8 @@ const AdminPage: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/scientists`, {
+      const apiUrl = process.env.REACT_APP_API_URL || 'https://the-center-believers-backend.onrender.com';
+      const response = await fetch(`${apiUrl}/api/scientists`, {
         method: 'POST',
         body: formDataToSend,
       });
@@ -197,7 +198,8 @@ const AdminPage: React.FC = () => {
 
     try {
       console.log('正在删除科学家:', id);
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/scientists/${id}`, {
+      const apiUrl = process.env.REACT_APP_API_URL || 'https://the-center-believers-backend.onrender.com';
+      const response = await fetch(`${apiUrl}/api/scientists/${id}`, {
         method: 'DELETE',
       });
 
@@ -334,7 +336,7 @@ const AdminPage: React.FC = () => {
               src={scientist.image 
                 ? (scientist.image.startsWith('http') 
                     ? scientist.image 
-                    : `http://localhost:3001${scientist.image}`)
+                    : `${process.env.REACT_APP_API_URL || 'https://the-center-believers-backend.onrender.com'}${scientist.image}`)
                 : '/images/default-scientist.jpg'
               } 
               alt={scientist.name} 
