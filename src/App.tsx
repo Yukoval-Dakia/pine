@@ -55,7 +55,7 @@ const HiddenAdminTrigger: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <HashRouter>
+    <HashRouter basename="/the-center-believers-frontend">
       <AppContainer>
         <Navbar />
         <ContentContainer>
