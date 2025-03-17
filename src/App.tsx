@@ -28,26 +28,21 @@ const ContentContainer = styled.main`
 // 添加一个隐藏的管理入口组件
 const HiddenAdminTrigger: React.FC = () => {
   const navigate = useNavigate();
-  const [clicks, setClicks] = useState<number[]>([]);
-  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       // 只监听 G 键
       if (event.key.toLowerCase() === 'g') {
         const now = Date.now();
-        setClicks(prev => {
-          const recentClicks = prev.filter(time => now - time < 1000);
-          const newClicks = [...recentClicks, now];
-          
-          // 检查是否有三次连击
-          if (newClicks.length >= 3) {
-            setIsAdmin(true);
-            navigate('/admin');
-          }
-          
-          return newClicks;
-        });
+        // 直接使用一个局部变量来跟踪点击
+        let recentClicks: number[] = [];
+        recentClicks = recentClicks.filter(time => now - time < 1000);
+        recentClicks.push(now);
+        
+        // 检查是否有三次连击
+        if (recentClicks.length >= 3) {
+          navigate('/admin');
+        }
       }
     };
 

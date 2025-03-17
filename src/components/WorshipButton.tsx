@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, lazy } from 'react';
+import React, { useState, useRef, useEffect, lazy, useCallback } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { scientists as initialScientists, Scientist } from '../types/scientist';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -9,17 +9,6 @@ import EChurch from './EChurch';
 const glowAnimation = keyframes`
   0% { opacity: 0; }
   100% { opacity: 0.7; }
-`;
-
-// 彩虹边框动画
-const rainbowAnimation = keyframes`
-  0% { border-color: #ff0000; }
-  17% { border-color: #ff00ff; }
-  33% { border-color: #0000ff; }
-  50% { border-color: #00ffff; }
-  67% { border-color: #00ff00; }
-  83% { border-color: #ffff00; }
-  100% { border-color: #ff0000; }
 `;
 
 // 修改按钮到卡片的变形动画
@@ -126,25 +115,6 @@ const BuddhaGlow = styled.div`
   z-index: 1001;
 `;
 
-// 修改科学家容器样式
-const ScientistContainer = styled.div<{ $isVisible: boolean }>`
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  z-index: 1002;
-  text-align: center;
-  color: white;
-  width: 400px;
-  border: 5px solid gold;
-  border-radius: 20px;
-  overflow: hidden;
-  background-color: #1a1a1a;
-  opacity: ${props => props.$isVisible ? 1 : 0};
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  animation: ${props => props.$isVisible ? buttonToCardAnimation : cardToButtonAnimation} 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  will-change: transform;
-`;
-
 // 科学家照片
 const ScientistImage = styled.div<{ $image: string }>`
   width: 100%;
@@ -157,61 +127,6 @@ const ScientistImage = styled.div<{ $image: string }>`
   border-bottom: 5px solid gold;
   transition: background-image 0.3s ease;
 `;
-
-// 科目信息栏
-const SubjectBar = styled.div<{ color: string }>`
-  width: 100%;
-  padding: 20px;
-  background-color: #3498db;
-  color: white;
-  text-align: center;
-  font-size: 24px;
-  font-weight: bold;
-  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-`;
-
-// 科学家名称
-const ScientistName = styled.h2`
-  margin: 0;
-  padding: 20px;
-  font-size: 28px;
-  color: white;
-  text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
-  background-color: #1a1a1a;
-`;
-
-const LazyScientistImage: React.FC<{ scientist: typeof initialScientists[0] }> = ({ scientist }) => {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const imageRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const img = new Image();
-            img.src = scientist.image;
-            img.onload = () => setIsLoaded(true);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    if (imageRef.current) {
-      observer.observe(imageRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [scientist.image]);
-
-  return (
-    <ScientistImage
-      ref={imageRef}
-      $image={isLoaded ? scientist.image : scientist.thumbnail}
-    />
-  );
-};
 
 // 预加载函数
 const preloadImage = (url: string): Promise<void> => {
@@ -298,7 +213,7 @@ const WorshipButton: React.FC = () => {
   }, []);
 
   // 预加载所有科学家图片
-  const preloadAllImages = async () => {
+  const preloadAllImages = useCallback(async () => {
     try {
       const imagePromises = scientists
         .filter(s => s.image)
@@ -321,7 +236,7 @@ const WorshipButton: React.FC = () => {
     } catch (error) {
       console.error('图片预加载失败:', error);
     }
-  };
+  }, [scientists]);
 
   // 预加载下一个科学家的图片
   const preloadNextScientist = async (currentIndex: number) => {
@@ -369,7 +284,7 @@ const WorshipButton: React.FC = () => {
   };
 
   // 处理鼠标移动
-  const handleMouseMove = (e: MouseEvent) => {
+  const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!buttonRef.current) return;
     
     const rect = buttonRef.current.getBoundingClientRect();
@@ -396,7 +311,7 @@ const WorshipButton: React.FC = () => {
       clearTimeout(preloadTimeoutRef.current);
       preloadTimeoutRef.current = null;
     }
-  };
+  }, [preloadAllImages]);
 
   // 修改点击处理函数
   const handleClick = () => {
@@ -439,7 +354,7 @@ const WorshipButton: React.FC = () => {
         clearTimeout(preloadTimeoutRef.current);
       }
     };
-  }, []);
+  }, [handleMouseMove]);
 
   return (
     <>
