@@ -33,19 +33,19 @@ const ScientistImage = styled.div<{ $image: string }>`
   background-position: center;
   margin: 0;
   position: relative;
-  border-bottom: 5px solid gold;
   animation: ${fadeIn} 0.5s ease-in-out;
 `;
 
 // 卡片内容
-const CardContent = styled.div`
+const CardContent = styled.div<{ $bgColor: string }>`
   padding: 20px;
+  background-color: ${props => props.$bgColor};
 `;
 
 // 姓名标题
-const Name = styled.h2<{ $color: string }>`
+const Name = styled.h2<{ $textColor: string }>`
   margin: 0;
-  color: ${props => props.$color};
+  color: ${props => props.$textColor};
   font-size: 38px;
   display: flex;
   align-items: center;
@@ -62,14 +62,14 @@ const Name = styled.h2<{ $color: string }>`
     transform: translateX(-50%);
     width: 120px;
     height: 3px;
-    background-color: ${props => props.$color};
+    background-color: ${props => props.$textColor};
   }
 `;
 
 // 学科标签 - 修改为不遮挡图片
-const Subject = styled.div<{ $color: string }>`
-  background-color: ${props => props.$color}22;
-  color: ${props => props.$color};
+const Subject = styled.div<{ $textColor: string; $bgColor: string }>`
+  background-color: ${props => props.$bgColor};
+  color: ${props => props.$textColor};
   padding: 10px 25px;
   border-radius: 20px;
   display: block;
@@ -82,9 +82,9 @@ const Subject = styled.div<{ $color: string }>`
 `;
 
 // 科目容器
-const SubjectContainer = styled.div`
+const SubjectContainer = styled.div<{ $bgColor: string }>`
   padding: 20px 0 10px 0;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: ${props => props.$bgColor};
   width: 100%;
 `;
 
@@ -104,20 +104,38 @@ const ImagePlaceholder = styled.div`
   background: linear-gradient(to right, #f6f7f8 8%, #edeef1 18%, #f6f7f8 33%);
   background-size: 800px 104px;
   animation: ${ShimmerAnimation} 1.5s infinite linear forwards;
-  border-bottom: 5px solid #edeef1;
 `;
 
-// 随机背景颜色数组
+// 更鲜艳的背景颜色数组
 const backgroundColors = [
-  '#f8f9fa', // 浅灰
-  '#e9f5f9', // 浅蓝
-  '#f9f5e9', // 浅黄
-  '#f5e9f9', // 浅紫
-  '#e9f9f5', // 浅绿
-  '#f9e9e9', // 浅红
-  '#e9e9f9', // 浅蓝紫
-  '#f5f9e9', // 浅黄绿
+  '#4A90E2', // 亮蓝
+  '#50E3C2', // 青绿
+  '#F5A623', // 橙黄
+  '#D0021B', // 红色
+  '#9013FE', // 紫色
+  '#417505', // 绿色
+  '#8B572A', // 棕色
+  '#000000', // 黑色
 ];
+
+// 获取颜色的反色函数
+const getInverseColor = (hexColor: string): string => {
+  // 移除#前缀
+  const hex = hexColor.replace('#', '');
+  
+  // 将颜色转换为RGB
+  const r = parseInt(hex.substr(0, 2), 16);
+  const g = parseInt(hex.substr(2, 2), 16);
+  const b = parseInt(hex.substr(4, 2), 16);
+  
+  // 计算反色
+  const inverseR = 255 - r;
+  const inverseG = 255 - g;
+  const inverseB = 255 - b;
+  
+  // 转回十六进制格式
+  return `#${inverseR.toString(16).padStart(2, '0')}${inverseG.toString(16).padStart(2, '0')}${inverseB.toString(16).padStart(2, '0')}`;
+};
 
 // 科学家卡片组件
 interface ScientistCardProps {
@@ -135,8 +153,8 @@ const ScientistCard: React.FC<ScientistCardProps> = ({ scientist, isVisible, pre
   // 为依赖数组提取唯一标识符
   const scientistIdentifier = scientist._id || scientist.name;
   
-  // 生成随机背景颜色 - 基于科学家标识符生成确定性的颜色
-  const randomBgColor = useMemo(() => {
+  // 生成背景颜色和文字颜色
+  const { bgColor, textColor } = useMemo(() => {
     // 使用科学家标识符的字符串生成一个数字哈希
     let hash = 0;
     for (let i = 0; i < scientistIdentifier.length; i++) {
@@ -144,8 +162,12 @@ const ScientistCard: React.FC<ScientistCardProps> = ({ scientist, isVisible, pre
     }
     // 使用哈希值确定背景颜色的索引
     const index = Math.abs(hash % backgroundColors.length);
-    return backgroundColors[index];
-  }, [scientistIdentifier]); // 现在确实依赖于scientistIdentifier
+    const bgColor = backgroundColors[index];
+    // 生成文字颜色（背景的反色）
+    const textColor = getInverseColor(bgColor);
+    
+    return { bgColor, textColor };
+  }, [scientistIdentifier]);
   
   // 检查图片是否加载成功
   useEffect(() => {
@@ -178,9 +200,9 @@ const ScientistCard: React.FC<ScientistCardProps> = ({ scientist, isVisible, pre
   }, [scientist.image, scientist.fallbackImage, preloaded]);
 
   return (
-    <CardContainer $isVisible={isVisible} $bgColor={randomBgColor}>
-      <SubjectContainer>
-        <Subject $color={scientist.color || '#3498db'}>
+    <CardContainer $isVisible={isVisible} $bgColor={bgColor}>
+      <SubjectContainer $bgColor={bgColor}>
+        <Subject $textColor={textColor} $bgColor={`${bgColor}DD`}>
           {t.scientist.subjectPrefix} {scientist.subject || '未知学科'}
         </Subject>
       </SubjectContainer>
@@ -189,8 +211,8 @@ const ScientistCard: React.FC<ScientistCardProps> = ({ scientist, isVisible, pre
       ) : (
         <ImagePlaceholder />
       )}
-      <CardContent>
-        <Name $color={scientist.color || '#3498db'}>
+      <CardContent $bgColor={bgColor}>
+        <Name $textColor={textColor}>
           {scientist.name}
         </Name>
       </CardContent>
