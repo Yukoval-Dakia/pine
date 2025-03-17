@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "https://worship.yukovalstudios.com/static/css/main.f3775408.css",
+    "main.js": "https://worship.yukovalstudios.com/static/js/main.7259cdc4.js",
+    "static/js/169.a9c0050f.chunk.js": "https://worship.yukovalstudios.com/static/js/169.a9c0050f.chunk.js",
+    "static/js/453.9e360ccc.chunk.js": "https://worship.yukovalstudios.com/static/js/453.9e360ccc.chunk.js",
+    "index.html": "https://worship.yukovalstudios.com/index.html",
+    "main.f3775408.css.map": "https://worship.yukovalstudios.com/static/css/main.f3775408.css.map",
+    "main.7259cdc4.js.map": "https://worship.yukovalstudios.com/static/js/main.7259cdc4.js.map",
+    "169.a9c0050f.chunk.js.map": "https://worship.yukovalstudios.com/static/js/169.a9c0050f.chunk.js.map",
+    "453.9e360ccc.chunk.js.map": "https://worship.yukovalstudios.com/static/js/453.9e360ccc.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.f3775408.css",
+    "static/js/main.7259cdc4.js"
+  ]
+}
