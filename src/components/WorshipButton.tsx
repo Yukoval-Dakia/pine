@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, lazy, useCallback } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { scientists as initialScientists, Scientist } from '../types/scientist';
+import { Scientist } from '../types/scientist';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getTranslation } from '../translations';
 import EChurch from './EChurch';
@@ -11,8 +11,9 @@ const glowAnimation = keyframes`
   100% { opacity: 0.7; }
 `;
 
+// 下面的动画暂时未使用，但将来可能会用到
 // 修改按钮到卡片的变形动画
-const buttonToCardAnimation = keyframes`
+/* const buttonToCardAnimation = keyframes`
   0% {
     transform: translate(-50%, 100vh) scale(0.5);
     opacity: 0;
@@ -33,7 +34,7 @@ const cardToButtonAnimation = keyframes`
     transform: translate(-50%, 100vh) scale(0.5);
     opacity: 0;
   }
-`;
+`; */
 
 // 容器样式
 const ButtonContainer = styled.div`
@@ -115,8 +116,9 @@ const BuddhaGlow = styled.div`
   z-index: 1001;
 `;
 
+// 下面的组件暂时未使用，但将来可能会用到
 // 科学家照片
-const ScientistImage = styled.div<{ $image: string }>`
+/* const ScientistImage = styled.div<{ $image: string }>`
   width: 100%;
   height: 400px;
   background-image: url(${props => props.$image});
@@ -126,7 +128,7 @@ const ScientistImage = styled.div<{ $image: string }>`
   position: relative;
   border-bottom: 5px solid gold;
   transition: background-image 0.3s ease;
-`;
+`; */
 
 // 预加载函数
 const preloadImage = (url: string): Promise<void> => {
