@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/static/css/main.f3775408.css",
-    "main.js": "/static/js/main.b571dc55.js",
-    "static/js/169.138be50a.chunk.js": "/static/js/169.138be50a.chunk.js",
-    "static/js/453.9e360ccc.chunk.js": "/static/js/453.9e360ccc.chunk.js",
-    "index.html": "/index.html",
-    "main.f3775408.css.map": "/static/css/main.f3775408.css.map",
-    "main.b571dc55.js.map": "/static/js/main.b571dc55.js.map",
-    "169.138be50a.chunk.js.map": "/static/js/169.138be50a.chunk.js.map",
-    "453.9e360ccc.chunk.js.map": "/static/js/453.9e360ccc.chunk.js.map"
+    "main.css": "/the-center-believers-frontend/static/css/main.f3775408.css",
+    "main.js": "/the-center-believers-frontend/static/js/main.031bdf7e.js",
+    "static/js/169.138be50a.chunk.js": "/the-center-believers-frontend/static/js/169.138be50a.chunk.js",
+    "static/js/453.9e360ccc.chunk.js": "/the-center-believers-frontend/static/js/453.9e360ccc.chunk.js",
+    "index.html": "/the-center-believers-frontend/index.html",
+    "main.f3775408.css.map": "/the-center-believers-frontend/static/css/main.f3775408.css.map",
+    "main.031bdf7e.js.map": "/the-center-believers-frontend/static/js/main.031bdf7e.js.map",
+    "169.138be50a.chunk.js.map": "/the-center-believers-frontend/static/js/169.138be50a.chunk.js.map",
+    "453.9e360ccc.chunk.js.map": "/the-center-believers-frontend/static/js/453.9e360ccc.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.f3775408.css",
-    "static/js/main.b571dc55.js"
+    "static/js/main.031bdf7e.js"
   ]
 }
