@@ -165,38 +165,41 @@ const AdminPage: React.FC = () => {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const formDataToSend = new FormData();
-    formDataToSend.append('name', formData.name);
-    formDataToSend.append('subject', formData.subject);
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append('name', formData.name);
+      formDataToSend.append('subject', formData.subject);
 
-    if (formData.imageSource === 'upload' && formData.image) {
-      formDataToSend.append('image', formData.image);
-    } else if (formData.imageSource === 'url' && formData.imageUrl) {
-      if (!formData.imageUrl.startsWith('http')) {
-        alert('请输入有效的图片 URL');
+      if (formData.imageSource === 'upload' && formData.image) {
+        console.log('准备上传文件:', formData.image.name);
+        formDataToSend.append('image', formData.image);
+      } else if (formData.imageSource === 'url' && formData.imageUrl) {
+        if (!formData.imageUrl.startsWith('http')) {
+          alert('请输入有效的图片 URL');
+          return;
+        }
+        console.log('准备上传 URL:', formData.imageUrl);
+        formDataToSend.append('image', formData.imageUrl);
+      } else {
+        alert('请选择图片或输入图片 URL');
         return;
       }
-      formDataToSend.append('image', formData.imageUrl);
-    } else {
-      alert('请选择图片或输入图片 URL');
-      return;
-    }
 
-    try {
       const apiUrl = process.env.REACT_APP_API_URL || 'https://the-center-believers-backend.onrender.com';
+      console.log('发送请求到:', `${apiUrl}/api/scientists`);
+      
       const response = await fetch(`${apiUrl}/api/scientists`, {
         method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-        },
         body: formDataToSend,
-        credentials: 'include'
       });
 
+      console.log('服务器响应状态:', response.status);
+      
       if (!response.ok) {
         let errorMessage = '添加科学家失败';
         try {
           const errorData = await response.json();
+          console.error('服务器错误响应:', errorData);
           errorMessage = errorData.message || errorMessage;
         } catch (e) {
           console.error('解析错误响应失败:', e);
@@ -207,6 +210,7 @@ const AdminPage: React.FC = () => {
       const result = await response.json();
       console.log('添加科学家成功:', result);
 
+      // 重置表单
       setFormData({
         name: '',
         subject: '',
@@ -215,7 +219,11 @@ const AdminPage: React.FC = () => {
         imageSource: 'upload'
       });
       
-      fetchScientists();
+      // 刷新列表
+      await fetchScientists();
+      
+      // 显示成功消息
+      alert('科学家添加成功！');
     } catch (error) {
       console.error('添加科学家失败:', error);
       alert(error instanceof Error ? error.message : '添加科学家失败，请稍后重试');
