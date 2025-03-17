@@ -44,9 +44,9 @@ const CardContent = styled.div`
 
 // 姓名标题
 const Name = styled.h2<{ $color: string }>`
-  margin: 0 0 10px 0;
+  margin: 0;
   color: ${props => props.$color};
-  font-size: 32px;
+  font-size: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -60,7 +60,7 @@ const Name = styled.h2<{ $color: string }>`
     bottom: -5px;
     left: 50%;
     transform: translateX(-50%);
-    width: 100px;
+    width: 120px;
     height: 3px;
     background-color: ${props => props.$color};
   }
@@ -70,21 +70,20 @@ const Name = styled.h2<{ $color: string }>`
 const Subject = styled.div<{ $color: string }>`
   background-color: ${props => props.$color}22;
   color: ${props => props.$color};
-  padding: 8px 20px;
+  padding: 10px 25px;
   border-radius: 20px;
   display: block;
-  margin: 15px auto;
-  font-size: 18px;
+  margin: 20px auto;
+  font-size: 24px;
   font-weight: bold;
   text-align: center;
   width: fit-content;
-`;
-
-// 描述
-const Description = styled.p`
-  margin: 15px 0;
-  line-height: 1.6;
-  color: #333;
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 `;
 
 // 占位符加载动画
@@ -151,6 +150,9 @@ const ScientistCard: React.FC<ScientistCardProps> = ({ scientist, isVisible, pre
 
   return (
     <CardContainer $isVisible={isVisible}>
+      <Subject $color={scientist.color || '#3498db'}>
+        {t.scientist.subjectPrefix} {scientist.subject || '未知学科'}
+      </Subject>
       {isImageLoaded ? (
         <ScientistImage $image={imageSrc} />
       ) : (
@@ -160,9 +162,6 @@ const ScientistCard: React.FC<ScientistCardProps> = ({ scientist, isVisible, pre
         <Name $color={scientist.color || '#3498db'}>
           {scientist.name}
         </Name>
-        <Subject $color={scientist.color || '#3498db'}>
-          {t.scientist.subjectPrefix} {scientist.subject || '未知学科'}
-        </Subject>
       </CardContent>
     </CardContainer>
   );
