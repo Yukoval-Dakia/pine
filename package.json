@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "拜中心会网站的前端应用",
   "private": true,
-  "homepage": "https://yukoval-dakia.github.io/the-center-believers-frontend",
+  "homepage": "https://worship.yukovalstudios.com",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
