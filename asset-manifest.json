@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "https://worship.yukovalstudios.com/static/css/main.f3775408.css",
-    "main.js": "https://worship.yukovalstudios.com/static/js/main.2148d577.js",
-    "static/js/169.70325f28.chunk.js": "https://worship.yukovalstudios.com/static/js/169.70325f28.chunk.js",
+    "main.js": "https://worship.yukovalstudios.com/static/js/main.19fc2f81.js",
+    "static/js/169.bf8febef.chunk.js": "https://worship.yukovalstudios.com/static/js/169.bf8febef.chunk.js",
     "static/js/453.9e360ccc.chunk.js": "https://worship.yukovalstudios.com/static/js/453.9e360ccc.chunk.js",
     "index.html": "https://worship.yukovalstudios.com/index.html",
     "main.f3775408.css.map": "https://worship.yukovalstudios.com/static/css/main.f3775408.css.map",
-    "main.2148d577.js.map": "https://worship.yukovalstudios.com/static/js/main.2148d577.js.map",
-    "169.70325f28.chunk.js.map": "https://worship.yukovalstudios.com/static/js/169.70325f28.chunk.js.map",
+    "main.19fc2f81.js.map": "https://worship.yukovalstudios.com/static/js/main.19fc2f81.js.map",
+    "169.bf8febef.chunk.js.map": "https://worship.yukovalstudios.com/static/js/169.bf8febef.chunk.js.map",
     "453.9e360ccc.chunk.js.map": "https://worship.yukovalstudios.com/static/js/453.9e360ccc.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.f3775408.css",
-    "static/js/main.2148d577.js"
+    "static/js/main.19fc2f81.js"
   ]
 }
