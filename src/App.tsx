@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 // 页面组件
@@ -55,7 +55,7 @@ const HiddenAdminTrigger: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+    <HashRouter>
       <AppContainer>
         <Navbar />
         <ContentContainer>
@@ -71,7 +71,7 @@ const App: React.FC = () => {
         </ContentContainer>
         <WorshipButton />
       </AppContainer>
-    </BrowserRouter>
+    </HashRouter>
   );
 };
 
