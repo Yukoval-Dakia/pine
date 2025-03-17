@@ -1,151 +1,168 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Scientist } from '../types/scientist';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getTranslation } from '../translations';
 
+// 卡片容器样式
+const CardContainer = styled.div<{ $isVisible: boolean }>`
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  width: 80%;
+  max-width: 500px;
+  position: relative;
+  z-index: 1002;
+  opacity: ${props => props.$isVisible ? 1 : 0};
+  transform: ${props => props.$isVisible ? 'scale(1)' : 'scale(0.9)'};
+  transition: opacity 0.3s ease, transform 0.3s ease;
+`;
+
+const fadeIn = keyframes`
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+`;
+
+// 科学家照片
+const ScientistImage = styled.div<{ $image: string }>`
+  width: 100%;
+  height: 350px;
+  background-image: url(${props => props.$image});
+  background-size: cover;
+  background-position: center;
+  margin: 0;
+  position: relative;
+  border-bottom: 5px solid gold;
+  animation: ${fadeIn} 0.5s ease-in-out;
+`;
+
+// 卡片内容
+const CardContent = styled.div`
+  padding: 20px;
+`;
+
+// 姓名标题
+const Name = styled.h2<{ $color: string }>`
+  margin: 0 0 10px 0;
+  color: ${props => props.$color};
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background-color: ${props => props.$color};
+  }
+`;
+
+// 学科标签
+const Subject = styled.div<{ $color: string }>`
+  background-color: ${props => props.$color}22;
+  color: ${props => props.$color};
+  padding: 4px 10px;
+  border-radius: 15px;
+  display: inline-block;
+  margin: 10px 0;
+  font-size: 14px;
+  font-weight: bold;
+`;
+
+// 描述
+const Description = styled.p`
+  margin: 15px 0;
+  line-height: 1.6;
+  color: #333;
+`;
+
+// 占位符加载动画
+const ShimmerAnimation = keyframes`
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+`;
+
+const ImagePlaceholder = styled.div`
+  width: 100%;
+  height: 350px;
+  background: linear-gradient(to right, #f6f7f8 8%, #edeef1 18%, #f6f7f8 33%);
+  background-size: 800px 104px;
+  animation: ${ShimmerAnimation} 1.5s infinite linear forwards;
+  border-bottom: 5px solid #edeef1;
+`;
+
+// 科学家卡片组件
 interface ScientistCardProps {
   scientist: Scientist;
   isVisible: boolean;
   preloaded?: boolean;
 }
 
-// 修改科学家容器样式
-const ScientistContainer = styled.div<{ $isVisible: boolean }>`
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  z-index: 1002;
-  text-align: center;
-  color: white;
-  width: 400px;
-  border: 5px solid gold;
-  border-radius: 20px;
-  overflow: hidden;
-  background-color: #1a1a1a;
-  opacity: ${props => props.$isVisible ? 1 : 0};
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  animation: ${props => props.$isVisible ? buttonToCardAnimation : cardToButtonAnimation} 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  will-change: transform;
-`;
-
-// 科学家照片
-const ScientistImage = styled.div<{ image?: string }>`
-  width: 100%;
-  height: 400px;
-  background-image: url(${props => props.image || '/images/default-scientist.jpg'});
-  background-size: cover;
-  background-position: center;
-  margin: 0;
-  position: relative;
-  border-bottom: 5px solid gold;
-  transition: background-image 0.3s ease;
-`;
-
-// 科目信息栏
-const SubjectBar = styled.div<{ color: string }>`
-  width: 100%;
-  padding: 20px;
-  background-color: #3498db;
-  color: white;
-  text-align: center;
-  font-size: 24px;
-  font-weight: bold;
-  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-`;
-
-// 科学家名称
-const ScientistName = styled.h2`
-  margin: 0;
-  padding: 20px;
-  font-size: 28px;
-  color: white;
-  text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
-  background-color: #1a1a1a;
-`;
-
-// 按钮到卡片的变形动画
-const buttonToCardAnimation = keyframes`
-  0% {
-    transform: translate(-50%, 100vh) scale(0.5);
-    opacity: 0;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-  }
-`;
-
-// 卡片到按钮的变形动画
-const cardToButtonAnimation = keyframes`
-  0% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(-50%, 100vh) scale(0.5);
-    opacity: 0;
-  }
-`;
-
-const LazyScientistImage: React.FC<{ scientist: Scientist; preloaded?: boolean }> = ({ scientist, preloaded = false }) => {
-  const [isLoaded, setIsLoaded] = useState(preloaded);
-  const imageRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (preloaded || !scientist.image) {
-      setIsLoaded(true);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting && scientist.image) {
-            const img = new Image();
-            img.src = scientist.image;
-            img.onload = () => setIsLoaded(true);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    if (imageRef.current) {
-      observer.observe(imageRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [scientist.image, preloaded]);
-
-  return (
-    <ScientistImage
-      ref={imageRef}
-      image={isLoaded && scientist.image ? scientist.image : (scientist.thumbnail || '/images/default-scientist.jpg')}
-      style={{
-        willChange: 'transform, opacity',
-        transition: 'background-image 0.3s ease'
-      }}
-    />
-  );
-};
-
 const ScientistCard: React.FC<ScientistCardProps> = ({ scientist, isVisible, preloaded = false }) => {
   const { language } = useLanguage();
   const t = getTranslation(language);
+  const [isImageLoaded, setIsImageLoaded] = useState(preloaded);
+  const [imageSrc, setImageSrc] = useState(scientist.image || '');
+  
+  // 检查图片是否加载成功
+  useEffect(() => {
+    if (!scientist.image || preloaded) {
+      setIsImageLoaded(true);
+      return;
+    }
+    
+    const img = new Image();
+    img.onload = () => {
+      setIsImageLoaded(true);
+    };
+    img.onerror = () => {
+      // 当主图片加载失败时，尝试使用备用图片
+      console.log('使用备用图片:', scientist.fallbackImage);
+      setImageSrc(scientist.fallbackImage || '');
+      
+      // 检查备用图片是否能加载
+      const fallbackImg = new Image();
+      fallbackImg.onload = () => {
+        setIsImageLoaded(true);
+      };
+      fallbackImg.onerror = () => {
+        // 即使备用图片失败也设置为已加载，显示空图片区域总比无限加载好
+        setIsImageLoaded(true);
+      };
+      fallbackImg.src = scientist.fallbackImage || '';
+    };
+    img.src = scientist.image;
+  }, [scientist.image, scientist.fallbackImage, preloaded]);
 
   return (
-    <ScientistContainer 
-      $isVisible={isVisible}
-      style={{ willChange: 'transform, opacity' }}
-    >
-      <LazyScientistImage scientist={scientist} preloaded={preloaded} />
-      <SubjectBar color={scientist.color || '#3498db'}>
-        {t.scientist.subjectPrefix}{scientist.subject || '未设置学科'}
-      </SubjectBar>
-      <ScientistName>{scientist.name}</ScientistName>
-    </ScientistContainer>
+    <CardContainer $isVisible={isVisible}>
+      {isImageLoaded ? (
+        <ScientistImage $image={imageSrc} />
+      ) : (
+        <ImagePlaceholder />
+      )}
+      <CardContent>
+        <Name $color={scientist.color || '#3498db'}>
+          {scientist.name}
+        </Name>
+        <Subject $color={scientist.color || '#3498db'}>
+          {t.scientist.subjectPrefix} {scientist.subject || '未知学科'}
+        </Subject>
+        <Description>
+          {scientist.description || '暂无描述'}
+        </Description>
+      </CardContent>
+    </CardContainer>
   );
 };
 
-export default ScientistCard; 
+export default ScientistCard;

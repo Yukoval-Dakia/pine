@@ -198,20 +198,31 @@ const WorshipButton: React.FC = () => {
         const data = await response.json();
         console.log('成功获取科学家数据，数量:', data.length);
         
-        // 处理图片 URL
-        const processedData = data.map((scientist: Scientist) => ({
-          ...scientist,
-          image: scientist.image?.startsWith('http') 
-            ? scientist.image 
-            : `${process.env.REACT_APP_API_URL}${scientist.image}`,
-          thumbnail: scientist.thumbnail?.startsWith('http')
-            ? scientist.thumbnail
-            : scientist.thumbnail 
-              ? `${process.env.REACT_APP_API_URL}${scientist.thumbnail}`
-              : scientist.image?.startsWith('http')
-                ? scientist.image
-                : `${process.env.REACT_APP_API_URL}${scientist.image}`
-        }));
+        // 处理图片 URL - 添加回退机制
+        const processedData = data.map((scientist: Scientist) => {
+          // 确保有本地回退图片
+          const fallbackImage = `/images/${scientist.name ? scientist.name.toLowerCase() : 'einstein'}.jpg`;
+          const fallbackThumb = `/images/${scientist.name ? scientist.name.toLowerCase() : 'einstein'}-thumb.jpg`;
+          
+          return {
+            ...scientist,
+            // 保存原始路径作为主要图片URL
+            image: scientist.image?.startsWith('http') 
+              ? scientist.image 
+              : `${process.env.REACT_APP_API_URL}${scientist.image}`,
+            // 保存回退路径
+            fallbackImage: fallbackImage,
+            // 同样处理缩略图
+            thumbnail: scientist.thumbnail?.startsWith('http')
+              ? scientist.thumbnail
+              : scientist.thumbnail 
+                ? `${process.env.REACT_APP_API_URL}${scientist.thumbnail}`
+                : scientist.image?.startsWith('http')
+                  ? scientist.image
+                  : `${process.env.REACT_APP_API_URL}${scientist.image}`,
+            fallbackThumbnail: fallbackThumb
+          };
+        });
         setScientists(processedData);
         setError(null);
       } catch (error) {

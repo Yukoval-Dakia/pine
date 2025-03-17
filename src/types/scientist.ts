@@ -12,6 +12,8 @@ export interface Scientist {
   thumbnail: string;
   createdAt?: string;
   updatedAt?: string;
+  fallbackImage?: string;
+  fallbackThumbnail?: string;
 }
 
 export const scientists: Scientist[] = []; 
