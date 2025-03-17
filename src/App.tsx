@@ -28,19 +28,19 @@ const ContentContainer = styled.main`
 // 添加一个隐藏的管理入口组件
 const HiddenAdminTrigger: React.FC = () => {
   const navigate = useNavigate();
+  const recentClicksRef = React.useRef<number[]>([]);
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       // 只监听 G 键
       if (event.key.toLowerCase() === 'g') {
         const now = Date.now();
-        // 直接使用一个局部变量来跟踪点击
-        let recentClicks: number[] = [];
-        recentClicks = recentClicks.filter(time => now - time < 1000);
-        recentClicks.push(now);
+        // 使用useRef来保持点击状态
+        recentClicksRef.current = recentClicksRef.current.filter(time => now - time < 1000);
+        recentClicksRef.current.push(now);
         
         // 检查是否有三次连击
-        if (recentClicks.length >= 3) {
+        if (recentClicksRef.current.length >= 3) {
           navigate('/admin');
         }
       }
