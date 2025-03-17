@@ -133,12 +133,13 @@ const BuddhaGlow = styled.div`
 // 预加载函数
 const preloadImage = (url: string): Promise<void> => {
   if (!url) {
-    return Promise.reject(new Error('无效的图片 URL'));
+    console.log('跳过无效的图片 URL');
+    return Promise.resolve(); // 返回已解决的Promise，而不是拒绝
   }
 
   console.log('开始预加载图片:', url);
   
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => { // 移除reject参数，确保始终解析
     const img = new Image();
     img.onload = () => {
       console.log('图片预加载成功:', url);
@@ -146,7 +147,8 @@ const preloadImage = (url: string): Promise<void> => {
     };
     img.onerror = (error) => {
       console.error('图片预加载失败:', url, error);
-      reject(error);
+      // 不再调用reject，而是以resolve结束Promise
+      resolve(); // 即使失败也解析Promise，防止中断Promise.all
     };
     img.src = url;
   });
@@ -241,28 +243,37 @@ const WorshipButton: React.FC = () => {
   // 预加载所有科学家图片
   const preloadAllImages = useCallback(async () => {
     try {
-      const imagePromises = scientists
-        .filter(s => s.image)
-        .map(s => preloadImage(s.image));
+      if (!scientists || scientists.length === 0) {
+        console.log('没有科学家数据可供预加载');
+        return;
+      }
 
-      const thumbnailPromises = scientists
-        .filter(s => s.thumbnail)
-        .map(s => preloadImage(s.thumbnail));
-
-      await Promise.all([...imagePromises, ...thumbnailPromises]);
+      console.log('开始预加载所有科学家图片...');
       
-      const validImages = scientists
-        .filter(s => s.image)
-        .map(s => s.image);
-      const validThumbnails = scientists
-        .filter(s => s.thumbnail)
-        .map(s => s.thumbnail);
+      // 分批预加载，不使用Promise.all
+      const allImages = [
+        ...scientists.filter(s => s.image).map(s => s.image),
+        ...scientists.filter(s => s.thumbnail).map(s => s.thumbnail)
+      ].filter(url => url && !preloadedImages.has(url));
       
-      setPreloadedImages(new Set([...validImages, ...validThumbnails]));
+      console.log(`需要预加载的图片数量: ${allImages.length}`);
+      
+      for (const url of allImages) {
+        try {
+          await preloadImage(url);
+          // 每加载成功一张图片就更新状态
+          setPreloadedImages(prev => new Set([...Array.from(prev), url]));
+        } catch (err) {
+          console.error(`预加载图片失败: ${url}`, err);
+          // 继续处理下一张图片
+        }
+      }
+      
+      console.log('图片预加载完成');
     } catch (error) {
-      console.error('图片预加载失败:', error);
+      console.error('图片批量预加载过程出错:', error);
     }
-  }, [scientists]);
+  }, [scientists, preloadedImages]);
 
   // 预加载下一个科学家的图片
   const preloadNextScientist = async (currentIndex: number) => {
@@ -271,32 +282,28 @@ const WorshipButton: React.FC = () => {
       return;
     }
     
-    const nextIndex = (currentIndex + 1) % scientists.length;
-    const nextScientist = scientists[nextIndex];
-    
-    if (!nextScientist) {
-      console.log('无法获取下一个科学家数据');
-      return;
-    }
-
-    if (!nextScientist.image) {
-      console.log('下一个科学家没有图片');
-      return;
-    }
-
-    if (preloadedImages.has(nextScientist.image)) {
-      console.log('图片已经预加载过:', nextScientist.image);
-      return;
-    }
-
     try {
-      const promises = [preloadImage(nextScientist.image)];
-      if (nextScientist.thumbnail) {
-        promises.push(preloadImage(nextScientist.thumbnail));
+      const nextIndex = (currentIndex + 1) % scientists.length;
+      const nextScientist = scientists[nextIndex];
+      
+      if (!nextScientist || !nextScientist.image) {
+        console.log('下一个科学家没有可用图片');
+        return;
       }
-
-      await Promise.all(promises);
-
+      
+      // 检查图片是否已预加载
+      if (preloadedImages.has(nextScientist.image)) {
+        console.log('已预加载过图片:', nextScientist.image);
+        return;
+      }
+      
+      // 预加载图片
+      await preloadImage(nextScientist.image);
+      
+      if (nextScientist.thumbnail) {
+        await preloadImage(nextScientist.thumbnail);
+      }
+      
       const newImages = [nextScientist.image];
       if (nextScientist.thumbnail) {
         newImages.push(nextScientist.thumbnail);
@@ -306,6 +313,7 @@ const WorshipButton: React.FC = () => {
       console.log('成功预加载下一个科学家的图片');
     } catch (error) {
       console.error('预加载下一个科学家的图片失败:', error);
+      // 错误不会阻止程序继续执行
     }
   };
 
