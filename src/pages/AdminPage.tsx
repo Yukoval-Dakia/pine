@@ -77,6 +77,8 @@ const ScientistInfo = styled.div`
 
 const AdminPage: React.FC = () => {
   const [scientists, setScientists] = useState<Scientist[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     subject: '',
@@ -89,25 +91,44 @@ const AdminPage: React.FC = () => {
     fetchScientists();
   }, []);
 
-  const fetchScientists = async () => {
+  const fetchScientists = async (retryCount = 0) => {
+    setLoading(true);
+    setError(null);
+    
     try {
-      console.log('管理页面获取科学家数据，API URL:', process.env.REACT_APP_API_URL);
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/scientists`, {
+      // 使用硬编码的URL作为备选
+      const apiUrl = process.env.REACT_APP_API_URL || 'https://the-center-believers-backend.onrender.com';
+      console.log('管理页面获取科学家数据，API URL:', apiUrl);
+      
+      const response = await fetch(`${apiUrl}/api/scientists`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         }
       });
+      
       if (!response.ok) {
         console.error(`API请求失败: ${response.status} ${response.statusText}`);
         throw new Error(`获取科学家列表失败，状态码: ${response.status}`);
       }
+      
       const data = await response.json();
       console.log('成功获取科学家数据，数量:', data.length);
       setScientists(data);
+      setError(null);
     } catch (error) {
       console.error('获取科学家列表失败:', error);
+      setError('连接后端服务失败。后端服务可能正在启动中，请稍后再试。');
+      
+      // 如果是连接错误并且重试次数小于3，则尝试重试
+      if (retryCount < 3 && error instanceof Error && 
+          (error.message.includes('fetch') || error.message.includes('network'))) {
+        console.log(`将在3秒后重试 (${retryCount + 1}/3)...`);
+        setTimeout(() => fetchScientists(retryCount + 1), 3000);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -196,6 +217,36 @@ const AdminPage: React.FC = () => {
   return (
     <AdminContainer>
       <Title>科学家管理</Title>
+      
+      {error && (
+        <div style={{ 
+          padding: '10px', 
+          marginBottom: '20px', 
+          backgroundColor: '#ff9994', 
+          color: '#721c24',
+          borderRadius: '4px'
+        }}>
+          <p>{error}</p>
+          <Button 
+            onClick={() => fetchScientists()} 
+            style={{ marginTop: '10px', backgroundColor: '#dc3545' }}
+          >
+            重试连接
+          </Button>
+        </div>
+      )}
+      
+      {loading && (
+        <div style={{ 
+          padding: '10px', 
+          marginBottom: '20px', 
+          backgroundColor: '#e2e3e5', 
+          color: '#383d41',
+          borderRadius: '4px'
+        }}>
+          正在加载数据，请稍候...
+        </div>
+      )}
       
       <ScientistForm onSubmit={handleSubmit}>
         <FormGroup>
