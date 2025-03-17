@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { Scientist } from '../types/scientist';
 
@@ -87,11 +87,7 @@ const AdminPage: React.FC = () => {
     imageSource: 'upload' // 'upload' 或 'url'
   });
 
-  useEffect(() => {
-    fetchScientists();
-  }, []);
-
-  const fetchScientists = async (retryCount = 0) => {
+  const fetchScientists = useCallback(async (retryCount = 0) => {
     setLoading(true);
     setError(null);
     
@@ -130,7 +126,11 @@ const AdminPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchScientists();
+  }, [fetchScientists]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, files } = e.target as HTMLInputElement;
