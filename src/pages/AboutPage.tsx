@@ -148,7 +148,7 @@ const AboutPage: React.FC = () => {
     const fetchAboutPage = async () => {
       try {
         console.log('环境变量 REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
-        const apiUrl = `${process.env.REACT_APP_API_URL}/wordpress/pages/about`;
+        const apiUrl = `${process.env.REACT_APP_API_URL}/api/wordpress/pages/about`;
         console.log('Fetching about page from:', apiUrl);
         const response = await axios.get(apiUrl);
         console.log('Response data:', response.data);
