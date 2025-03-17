@@ -162,38 +162,50 @@ const AdminPage: React.FC = () => {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     const formDataToSend = new FormData();
     formDataToSend.append('name', formData.name);
     formDataToSend.append('subject', formData.subject);
 
-    if (formData.imageSource === 'upload') {
-      if (!formData.image) {
-        alert('请选择科学家图片');
-        return;
-      }
+    if (formData.imageSource === 'upload' && formData.image) {
       formDataToSend.append('image', formData.image);
-    } else {
-      if (!formData.imageUrl) {
-        alert('请输入图片 URL');
+    } else if (formData.imageSource === 'url' && formData.imageUrl) {
+      if (!formData.imageUrl.startsWith('http')) {
+        alert('请输入有效的图片 URL');
         return;
       }
       formDataToSend.append('image', formData.imageUrl);
+    } else {
+      alert('请选择图片或输入图片 URL');
+      return;
     }
 
     try {
       const apiUrl = process.env.REACT_APP_API_URL || 'https://the-center-believers-backend.onrender.com';
       const response = await fetch(`${apiUrl}/api/scientists`, {
         method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+        },
         body: formDataToSend,
+        credentials: 'include'
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || '添加科学家失败');
+        let errorMessage = '添加科学家失败';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (e) {
+          console.error('解析错误响应失败:', e);
+        }
+        throw new Error(errorMessage);
       }
+
+      const result = await response.json();
+      console.log('添加科学家成功:', result);
 
       setFormData({
         name: '',
@@ -202,10 +214,11 @@ const AdminPage: React.FC = () => {
         imageUrl: '',
         imageSource: 'upload'
       });
+      
       fetchScientists();
     } catch (error) {
       console.error('添加科学家失败:', error);
-      alert(error instanceof Error ? error.message : '添加科学家失败');
+      alert(error instanceof Error ? error.message : '添加科学家失败，请稍后重试');
     }
   };
 
@@ -266,7 +279,7 @@ const AdminPage: React.FC = () => {
         </div>
       )}
 
-      <ScientistForm onSubmit={handleSubmit}>
+      <ScientistForm onSubmit={onSubmit}>
         <FormGroup>
           <Label>姓名</Label>
           <Input
