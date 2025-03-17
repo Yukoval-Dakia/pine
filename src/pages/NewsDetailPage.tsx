@@ -59,19 +59,31 @@ const Error = styled.div`
   font-size: 1.2rem;
 `;
 
+const formatDate = (dateString: string): string => {
+  try {
+    const timestamp = Date.parse(dateString);
+    if (isNaN(timestamp)) {
+      return '日期无效';
+    }
+    const date = new Date(timestamp);
+    return date.toLocaleDateString('zh-CN', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  } catch (error) {
+    console.error('日期格式化错误:', error);
+    return '日期无效';
+  }
+};
+
 interface NewsPost {
-  id: number;
-  title: {
-    rendered: string;
-  };
-  content: {
-    rendered: string;
-  };
+  ID: number;
+  title: string;
+  content: string;
   date: string;
-  _embedded?: {
-    author?: Array<{
-      name: string;
-    }>;
+  author: {
+    name: string;
   };
 }
 
@@ -106,21 +118,17 @@ const NewsDetailPage: React.FC = () => {
   }
 
   if (!post) {
-    return <Error>未找到新闻内容</Error>;
+    return <Error>未找到文章</Error>;
   }
 
   return (
     <Container>
-      <Title dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
+      <Title dangerouslySetInnerHTML={{ __html: post.title }} />
       <Meta>
-        {new Date(post.date).toLocaleDateString('zh-CN', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        })}
-        {post._embedded?.author && ` · ${post._embedded.author[0].name}`}
+        <span>作者: {post.author.name}</span>
+        <span>发布时间: {formatDate(post.date)}</span>
       </Meta>
-      <Content dangerouslySetInnerHTML={{ __html: post.content.rendered }} />
+      <Content dangerouslySetInnerHTML={{ __html: post.content }} />
     </Container>
   );
 };

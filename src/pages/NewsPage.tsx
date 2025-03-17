@@ -80,19 +80,12 @@ const Error = styled.div`
 `;
 
 interface NewsPost {
-  id: number;
-  title: {
-    rendered: string;
-  };
-  excerpt: {
-    rendered: string;
-  };
+  ID: number;
+  title: string;
+  excerpt: string;
+  content: string;
   date: string;
-  _embedded?: {
-    'wp:featuredmedia'?: Array<{
-      source_url: string;
-    }>;
-  };
+  featured_image: string;
 }
 
 const formatDate = (dateString: string): string => {
@@ -146,13 +139,13 @@ const NewsPage: React.FC = () => {
     <Container>
       <Grid>
         {posts.map(post => (
-          <Card key={post.id} to={`/news/${post.id}`}>
+          <Card key={post.ID} to={`/news/${post.ID}`}>
             <ImageContainer 
-              $imageUrl={post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '/images/default-news.jpg'} 
+              $imageUrl={post.featured_image || '/images/default-news.jpg'} 
             />
             <Content>
-              <Title dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
-              <Excerpt dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }} />
+              <Title dangerouslySetInnerHTML={{ __html: post.title }} />
+              <Excerpt dangerouslySetInnerHTML={{ __html: post.excerpt }} />
               <DateText>{formatDate(post.date)}</DateText>
             </Content>
           </Card>
