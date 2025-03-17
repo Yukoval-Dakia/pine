@@ -164,16 +164,22 @@ const WorshipButton: React.FC = () => {
   const [selectedScientist, setSelectedScientist] = useState<Scientist | null>(null);
   const [preloadedImages, setPreloadedImages] = useState<Set<string>>(new Set());
   const [scientists, setScientists] = useState<Scientist[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
   const preloadTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [showEChurch, setShowEChurch] = useState(false);
 
   // 获取科学家列表
   useEffect(() => {
-    const fetchScientists = async () => {
+    const fetchScientists = async (retryCount = 0) => {
+      setLoading(true);
+      setError(null);
+      
       try {
         console.log('开始获取科学家数据...');
         console.log('拜佛组件获取科学家数据，API URL:', process.env.REACT_APP_API_URL);
+        
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/scientists`, {
           method: 'GET',
           headers: {
@@ -205,13 +211,31 @@ const WorshipButton: React.FC = () => {
                 : `${process.env.REACT_APP_API_URL}${scientist.image}`
         }));
         setScientists(processedData);
+        setError(null);
       } catch (error) {
         console.error('获取科学家数据失败:', error);
-        setScientists([]);
+        setError('连接后端服务失败');
+        
+        // 如果是连接错误并且重试次数小于3，则尝试重试
+        if (retryCount < 3 && error instanceof Error && 
+            (error.message.includes('fetch') || error.message.includes('network'))) {
+          console.log(`将在3秒后重试获取科学家数据 (${retryCount + 1}/3)...`);
+          setTimeout(() => fetchScientists(retryCount + 1), 3000);
+        }
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchScientists();
+    
+    // 暴露重试方法供按钮使用
+    (window as any).retryFetchingScientists = () => fetchScientists();
+    
+    return () => {
+      // 清理全局变量
+      delete (window as any).retryFetchingScientists;
+    };
   }, []);
 
   // 预加载所有科学家图片
@@ -365,10 +389,46 @@ const WorshipButton: React.FC = () => {
           $isHovered={isHovered} 
           $isExpanded={isExpanded}
           onClick={handleClick}
-          disabled={scientists.length === 0}
+          disabled={loading || scientists.length === 0}
         >
-          {scientists.length === 0 ? '加载中...' : t.home.worshipButton}
+          {loading ? '连接中...' : error ? '连接失败' : scientists.length === 0 ? '无数据' : t.home.worshipButton}
         </StyledButton>
+        {error && (
+          <div style={{
+            position: 'absolute',
+            bottom: '70px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            backgroundColor: 'rgba(255, 0, 0, 0.7)',
+            color: 'white',
+            padding: '8px 12px',
+            borderRadius: '8px',
+            fontSize: '12px',
+            textAlign: 'center',
+            whiteSpace: 'nowrap',
+            zIndex: 101
+          }}>
+            后端连接失败，请稍后再试
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                (window as any).retryFetchingScientists?.();
+              }}
+              style={{
+                marginLeft: '10px',
+                backgroundColor: 'white',
+                color: 'red',
+                border: 'none',
+                borderRadius: '4px',
+                padding: '2px 8px',
+                fontSize: '12px',
+                cursor: 'pointer'
+              }}
+            >
+              重试
+            </button>
+          </div>
+        )}
       </ButtonContainer>
 
       <PopupOverlay $isVisible={showPopup} onClick={closePopup}>
