@@ -47,6 +47,17 @@ interface TranslationContent {
     };
     successMessage: string;
   };
+  footer: {
+    openSource: string;
+    privacyPolicy: string;
+    openSourceDetails: string;
+  };
+  // 开源页面
+  openSource: {
+    title: string;
+    description: string;
+    viewSource: string;
+  };
 }
 
 // 翻译类型
@@ -97,6 +108,16 @@ const translations: Translations = {
       },
       successMessage: '发表成功！',
     },
+    footer: {
+      openSource: '本项目基于 MIT 许可证开源',
+      privacyPolicy: '隐私政策',
+      openSourceDetails: '本项目使用了以下开源项目：React、React Router、Styled Components、Axios、TypeScript、React Google reCAPTCHA、React Turnstile 等。感谢开源社区的贡献。',
+    },
+    openSource: {
+      title: '开源项目',
+      description: '本项目使用了许多优秀的开源项目。在此列出所有主要依赖项目，以表示感谢。',
+      viewSource: '查看源码',
+    },
   },
   
   // 英文翻译
@@ -140,6 +161,16 @@ const translations: Translations = {
       },
       successMessage: 'Posted successfully!',
     },
+    footer: {
+      openSource: 'This project is open source under the MIT License',
+      privacyPolicy: 'Privacy Policy',
+      openSourceDetails: 'This project uses the following open source projects: React, React Router, Styled Components, Axios, TypeScript, React Google reCAPTCHA, React Turnstile, and more. Thanks to the open source community.',
+    },
+    openSource: {
+      title: 'Open Source Projects',
+      description: 'This project uses many excellent open source projects. Listed here are all major dependencies to express our gratitude.',
+      viewSource: 'View Source',
+    },
   },
   
   // 日文翻译
@@ -182,6 +213,16 @@ const translations: Translations = {
         serverError: 'サーバーエラー。後でもう一度お試しください',
       },
       successMessage: '投稿に成功しました！',
+    },
+    footer: {
+      openSource: 'このプロジェクトは MIT ライセンスのもとでオープンソースです',
+      privacyPolicy: 'プライバシーポリシー',
+      openSourceDetails: '本プロジェクトは以下のオープンソースプロジェクトを使用しています：React、React Router、Styled Components、Axios、TypeScript、React Google reCAPTCHA、React Turnstile など。オープンソースコミュニティに感謝いたします。',
+    },
+    openSource: {
+      title: 'オープンソースプロジェクト',
+      description: '本プロジェクトは多くの優れたオープンソースプロジェクトを使用しています。主要な依存関係をすべて記載し、感謝の意を表します。',
+      viewSource: 'ソースを表示',
     },
   },
 };

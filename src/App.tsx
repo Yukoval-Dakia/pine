@@ -9,6 +9,8 @@ import NewsPage from './pages/NewsPage';
 import NewsDetailPage from './pages/NewsDetailPage';
 import AdminPage from './pages/AdminPage';
 import ForumPage from './pages/ForumPage';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import OpenSourcePage from './pages/OpenSourcePage';
 
 // 组件
 import Navbar from './components/Navbar';
@@ -67,6 +69,8 @@ const App: React.FC = () => {
             <Route path="/news/:id" element={<NewsDetailPage />} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/forum" element={<ForumPage />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/open-source" element={<OpenSourcePage />} />
           </Routes>
         </ContentContainer>
         <WorshipButton />

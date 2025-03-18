@@ -37,6 +37,33 @@ const ReservedSection = styled.div`
   color: #999;
 `;
 
+const Footer = styled.footer`
+  margin-top: 40px;
+  padding: 20px;
+  text-align: center;
+  border-top: 1px solid #eee;
+  color: #666;
+  font-size: 0.9rem;
+`;
+
+const FooterLink = styled.a`
+  color: #666;
+  text-decoration: underline;
+  margin: 0 10px;
+  &:hover {
+    color: #333;
+  }
+`;
+
+const OpenSourceDetails = styled.p`
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: #888;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+`;
+
 const HomePage: React.FC = () => {
   const { language } = useLanguage();
   const t = getTranslation(language);
@@ -53,6 +80,16 @@ const HomePage: React.FC = () => {
       <ReservedSection>
         {t.home.reservedArea}
       </ReservedSection>
+
+      <Footer>
+        <p>© 2024 The Center Believers. {t.footer.openSource}</p>
+        <OpenSourceDetails>{t.footer.openSourceDetails}</OpenSourceDetails>
+        <div>
+          <FooterLink href="#/privacy-policy">{t.footer.privacyPolicy}</FooterLink>
+          <FooterLink href="#/open-source">{t.openSource.title}</FooterLink>
+          <FooterLink href="https://github.com/your-repo" target="_blank" rel="noopener noreferrer">GitHub</FooterLink>
+        </div>
+      </Footer>
     </HomeContainer>
   );
 };
