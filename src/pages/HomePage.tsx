@@ -82,7 +82,7 @@ const HomePage: React.FC = () => {
       </ReservedSection>
 
       <Footer>
-        <p>© 2024 The Center Believers. {t.footer.openSource}</p>
+        <p>© 2024 Yukoval Studios. {t.footer.openSource}</p>
         <OpenSourceDetails>{t.footer.openSourceDetails}</OpenSourceDetails>
         <div>
           <FooterLink href="#/privacy-policy">{t.footer.privacyPolicy}</FooterLink>
