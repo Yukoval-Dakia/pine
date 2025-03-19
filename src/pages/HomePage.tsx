@@ -87,7 +87,7 @@ const HomePage: React.FC = () => {
         <div>
           <FooterLink href="#/privacy-policy">{t.footer.privacyPolicy}</FooterLink>
           <FooterLink href="#/open-source">{t.openSource.title}</FooterLink>
-          <FooterLink href="https://github.com/your-repo" target="_blank" rel="noopener noreferrer">GitHub</FooterLink>
+          <FooterLink href="https://github.com/Yukoval-Dakia/pine" target="_blank" rel="noopener noreferrer">GitHub</FooterLink>
         </div>
       </Footer>
     </HomeContainer>
